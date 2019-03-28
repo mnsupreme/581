@@ -1,7 +1,5 @@
+from os import listdir
 import pyshark
-import sys
-import pprint
-import collections
 from scapy.all import *
 
 
@@ -11,23 +9,35 @@ cap = pyshark.FileCapture('test_capture.pcap',display_filter='ip.src == 192.168.
 
 max_number = 0
 
-for pkt in cap:
-	if pkt.tcp.stream > max_number:
-		max_number = pkt.tcp.stream
+streams[]
+cap = sorted(cap, key=lambda pkt:int(pkt.tcp.stream))
 
 
-for strm in range(0,max_number):
-	if pkt.tcp.stream == stream:
-		match = {
-			'dst_ip': pkt.ip.dst,
-			'src_ip': pkt.ip.src,
-			'dst_port': pkt.tcp.dstport,
-			'src_port': pkt.tcp.srcport,
-			'id':int(pkt.ip.id,16),
-			'checksum':int(pkt.tcp.checksum,16),
-			'seq':int(pkt.tcp.seq)
-			'ack':int(pkt.tcp.ack)
-		}
+
+for pkt in a:
+	match = {
+		'dst_ip': pkt.ip.dst,
+		'src_ip': pkt.ip.src,
+		'dst_port': int(pkt.tcp.dstport),
+		'src_port': int(pkt.tcp.srcport),
+		'id':int(pkt.ip.id,16),
+		'checksum':int(pkt.tcp.checksum,16),
+		'seq':int(pkt.tcp.seq)
+		'ack':int(pkt.tcp.ack)
+	}
+	scapy_packet =None
+	for scp in scap:
+		if scp['IP'].src = match['src_ip'] and scp['IP'].dst = match['dst_ip'] and src['IP'].id = match['id'] and src['TCP'].sport = match['src_port'] and src['TCP'].dport = match['dst_port'] and src['TCP'].seq = match['seq'] and src['TCP'].ack = match['ack'] and src['TCP'].chksum = match['checksum']:
+			scapy_packet = scp
+	if scapy_packet == None:
+		print("error: No matching packet")
+		break
+	else:
+		file = pkt.tcp.stream + '.pcap'
+		if int(pkt.tcp.stream) not in streams:
+			wrpcap(file,scapy_packet)
+		else:
+			wrpcap(file,scapy_packet,append=True)
 
 		
 
