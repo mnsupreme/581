@@ -1,24 +1,32 @@
-import pyshark
+from scapy.all import *
 import os
 
-a=pyshark.FileCapture('test_capture.pcap',display_filter='ip.src == 192.168.0.0/16 and ip.dst != 192.168.0.0/16 and tcp',override_prefs={'tcp.relative_sequence_numbers':False},disable_protocol='UDP',keep_packets=True)
+os.chdir('lab/streams')
+files = os.listdir()
+files = sorted(files, key=lambda file:file)
+print(files)
 
-max_number = int(a[0].tcp.stream)
+def seq_check(file):
+	#a=pyshark.FileCapture(input_file=file,display_filter='ip.src == 192.168.0.0/16 and ip.dst != 192.168.0.0/16 and tcp',override_prefs={'tcp.relative_sequence_numbers':False},disable_protocol='UDP',keep_packets=True)
+	a = sniff(offline=file,filter='tcp and ip src net 192.168 and not ip dst net 192.168')
+
+
+	current_greatest = 0
+
+	for pkt in a:
+		if current_greatest <= pkt['TCP'].seq:
+			current_greatest = pkt['TCP'].seq
+			print(pkt['TCP'].seq)
+		elif current_greatest > pkt['TCP'].seq:
+			raise Exception("packets out of order " + str(current_greatest) + " " + str(pkt['TCP'].seq))
+		else:
+			print(pkt['TCP'].seq)
+
+
+for file in files:
+	seq_check(file)
 
 # for pkt in a:
 # 	if int(pkt.tcp.stream) > max_number:
 # 		max_number = int(pkt.tcp.stream)
 
-prevseq = {'seq':0}
-stream = []
-
-for pkt in a:
-	if pkt.tcp.stream not in stream:
-		print("new stream	",pkt.tcp.stream)
-		stream.append(pkt.tcp.stream)
-	elif prevseq['seq'] > int(pkt.tcp.seq) and prevseq['strm'] == pkt.tcp.stream:
-		print("packets out of order " + prevseq[0] + " " + pkt.tcp.seq)
-	else:
-		print(pkt.tcp.seq)
-	prevseq['seq']=int(pkt.tcp.seq)
-	prevseq['strm']=pkt.tcp.stream
