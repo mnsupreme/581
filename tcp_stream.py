@@ -10,7 +10,7 @@ def run(file):
 	global write
 	global src
 	file = src + '/' + file
-	scap = sniff(offline=file,filter='tcp and ip src net 192.168 and not ip dst net 192.168')
+	scap = sniff(offline=file,filter='tcp',lfilter=lambda x:(x['IP'].src != x['IP'].dst))
 
 	
 
@@ -31,10 +31,12 @@ def run(file):
 if __name__ == '__main__':
 	src = sys.argv[1]
 	write = sys.argv[2]
-
-	#run(src)
-
 	files =  os.listdir(src)
+
+	# for file in files:
+	# 	run(file)
+
+	
 	pool = ThreadPool(6)
 	pool.map(run,files)
 
