@@ -1,4 +1,5 @@
 from os import listdir
+import gc
 import sys
 from scapy.all import *
 from multiprocessing.pool import ThreadPool
@@ -23,8 +24,9 @@ def run(file):
 		else:
 			wrpcap(dumpfile,pkt)
 
-
-
+	print("freeing memory")
+	del scap
+	gc.collect()
 		
 
 		
@@ -39,5 +41,7 @@ if __name__ == '__main__':
 	
 	pool = ThreadPool(6)
 	pool.map(run,files)
+	pool.close()
+	pool.join()
 
 
