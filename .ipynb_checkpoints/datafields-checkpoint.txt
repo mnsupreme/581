@@ -1,0 +1,33 @@
+packet
+	time deltas (time)
+
+IP
+
+sequential:
+
+	fragmentation offset (frag)
+	TTL
+
+token:
+
+	Type of Service (ToS)	
+	Header length (ihl)
+	Datagran size (len)
+
+
+
+TCP
+
+sequential:
+
+	dataoffset (dataofs)
+	
+
+
+token:
+
+	window size 
+	seq delta
+	ack delta
+	flags
+
