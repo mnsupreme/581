@@ -29,8 +29,9 @@ def initialize(file):
     global super_stream
     global stats
     count += 1
-    scap  = rdpcap(file)
+    scap  = sniff(offline=file,filter='tcp and ip')
     pkt = scap[0]
+    pkt.show()
     last_time = pkt.time
     last_seq = pkt.seq
     last_ack = pkt.ack
@@ -193,7 +194,7 @@ def describe(scap):
 def describe_reg(file): 
     global count
     global stats
-    scap = rdpcap(file)
+    scap = sniff(offline=file,filter='tcp and ip')
     count+=len(scap)
     for packet in range(0,len(scap)):
         pkt = scap[packet]
@@ -461,71 +462,71 @@ if __name__ == '__main__':
          'flags':{}
     } #flags[count,mean,normalized_mean]
     count = 0
-#     files = os.listdir(sys.argv[1])
-    files = os.listdir('dev')
+    files = os.listdir(sys.argv[1])
+    # files = os.listdir('dev')
     for x in range(0,len(files)):
-        files[x] = 'dev/' + files[x]
+        files[x] = sys.argv[1] + files[x]
     initialize(files[0])
     pprint.pprint(stats)
     files.remove(files[0])
-    for file in files:
-        q.put(file)
-    q.put(None)
+    # for file in files:
+    #     q.put(file)
+    # q.put(None)
     
-    reader1=Process(target=read)
-    reader1.start()
-    
-    
-    add_process=Process(target=adder, args=(super_stream,))
-    add_process.start()
-    compare1=Process(target=comparer, args=(stats,))
-    compare2=Process(target=comparer, args=(stats,))
-    compare1.start()
-    compare2.start()
-    agg=Process(target=aggregator, args=(stats,))
-    agg.start()
+    # reader1=Process(target=read)
+    # reader1.start()
     
     
-    reader1.join()
-    reader1.close()
-    print('reading complete')
+    # add_process=Process(target=adder, args=(super_stream,))
+    # add_process.start()
+    # compare1=Process(target=comparer, args=(stats,))
+    # compare2=Process(target=comparer, args=(stats,))
+    # compare1.start()
+    # compare2.start()
+    # agg=Process(target=aggregator, args=(stats,))
+    # agg.start()
+    
+    
+    # reader1.join()
+    # reader1.close()
+    # print('reading complete')
 
     
-    print('sq put none')
-    sq.put(None)
-    print('pq put none')
-    pq.put(None)
-    add_process.join()
-    add_process.close()
-    print('adding complete')
-    compare1.join()
-    compare2.join()
-    compare1.close()
-    compare2.close()
-    print('scalable comparing complete')
-    print(pq.qsize())
+    # print('sq put none')
+    # sq.put(None)
+    # print('pq put none')
+    # pq.put(None)
+    # add_process.join()
+    # add_process.close()
+    # print('adding complete')
+    # compare1.join()
+    # compare2.join()
+    # compare1.close()
+    # compare2.close()
+    # print('scalable comparing complete')
+    # print(pq.qsize())
     
-    print('buff put none')
-    buff.put(None)
+    # print('buff put none')
+    # buff.put(None)
 
-    agg.join()
-    agg.close()
-    print('comparing complete')
+    # agg.join()
+    # agg.close()
+    # print('comparing complete')
     
-    count_arr=[]
-    while reader_res.qsize() != 0:
-        count_arr.append(reader_res.get_nowait())
-    count =  count + np.sum(np.array(count_arr))
-    stats=agg_res.get_nowait()
-    super_stream=adder_res.get_nowait()
+    # count_arr=[]
+    # while reader_res.qsize() != 0:
+    #     count_arr.append(reader_res.get_nowait())
+    # count =  count + np.sum(np.array(count_arr))
+    # stats=agg_res.get_nowait()
+    # super_stream=adder_res.get_nowait()
     
         
 
 
     
     
-#     for file in files:
-#         describe_reg(file)
+    for file in files:
+        describe_reg(file)
     
     
     
