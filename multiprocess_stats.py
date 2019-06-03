@@ -216,9 +216,9 @@ def describe_reg(file):
         if pkt['IP'].len > stats['datagram_size'][1]:
             stats['datagram_size'][1] = pkt['IP'].len
         if pkt['TCP'].dataofs < stats['dataofs'][0]:
-            stats['datagram_size'][0] = pkt['TCP'].dataofs
+            stats['dataofs'][0] = pkt['TCP'].dataofs
         if pkt['TCP'].dataofs > stats['dataofs'][1]:
-            stats['datagram_size'][1] = pkt['TCP'].dataofs
+            stats['dataofs'][1] = pkt['TCP'].dataofs
         if pkt['TCP'].window < stats['window_size'][0]:
             stats['window_size'][0] = pkt['TCP'].window
         if pkt['TCP'].window > stats['window_size'][1]:
@@ -436,6 +436,7 @@ def calculate_mean():
     global super_stream
     means = np.divide(super_stream,count)
     keys = list(stats)
+    print(keys)
     keys.pop()
     for index in range(0,len(keys)):
         key = keys[index]
